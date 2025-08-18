@@ -29,4 +29,4 @@ ostatnie poprawki
 dodaj swój token w token.json
 opcjonalnie dodaj shortcutsy w shortcuts.json
 na końcu odpal bot.py
-WAŻNE: WPISZ W APLIKACJI TELEFONU "*31#" W TEN SPOSÓB WŁĄCZASZ DZWONIENIE Z PRYWATNYCH NUMERÓW
+WAŻNE: WPISZ W APLIKACJI TELEFONU "*31#" W TEN SPOSÓB WŁĄCZASZ DZWONIENIE Z PRYWATNYCH NUMERÓW (aby wyłaczyć spowrotem na normalne, wpisz "#31#")
