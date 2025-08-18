@@ -28,3 +28,4 @@ paczki do ADB które są potrzebne już znajdują sie w paczce
 ostatnie poprawki
 dodaj swój token w token.json
 opcjonalnie dodaj shortcutsy w shortcuts.json
+na końcu odpal bot.py
