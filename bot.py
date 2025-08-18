@@ -56,17 +56,20 @@ async def kolnij_command(interaction: discord.Interaction, numer: str, ilosc: in
 
     ilosc = max(1, min(ilosc, 5))
 
+    numer_info = shortcuts.get(numer.lower(), {"numer": numer, "czas": 6})
+    numer_do_dzwonienia = numer_info.get("numer", numer)
+    czas_polaczenia = numer_info.get("czas", 6)
+
     await interaction.response.send_message(
-        f"No i dobrza dzwonimy na {numer} {ilosc} razy, zwaituj chile...",
+        f"No i dobrza dzwonimy na {numer_do_dzwonienia} {ilosc} razy, zwaituj chile...",
         ephemeral=False
     )
     try:
         for _ in range(ilosc):
-            pierdzielnij_numer(numer, sekundy=6)
-        await interaction.followup.send(f"✅ Misja wykonana ✅, potwierdzenie przelewu: {numer}")
+            pierdzielnij_numer(numer_do_dzwonienia, sekundy=czas_polaczenia)
+        await interaction.followup.send(f"✅ Misja wykonana ✅, potwierdzenie przelewu: {numer_do_dzwonienia}")
     except Exception as e:
         await interaction.followup.send(f"12 giga szpontu poszło sie pierdolic: {e}")
-        
 
 choices = [app_commands.Choice(name=name, value=name) for name in shortcuts.keys()]
 
@@ -81,7 +84,9 @@ async def kolnijct_command(interaction: discord.Interaction, target: str, ilosc:
         await interaction.response.send_message("oj byczku nie masz whitelisty", ephemeral=True)
         return
 
-    numer = shortcuts.get(target.lower(), target)
+    numer_info = shortcuts.get(target.lower(), {"numer": target, "czas": 6})
+    numer_do_dzwonienia = numer_info["numer"]
+    czas_polaczenia = numer_info.get("czas", 6)
     ilosc = max(1, min(ilosc, 5))
 
     await interaction.response.send_message(
@@ -90,7 +95,7 @@ async def kolnijct_command(interaction: discord.Interaction, target: str, ilosc:
     )
     try:
         for _ in range(ilosc):
-            pierdzielnij_numer(numer, sekundy=6)
+            pierdzielnij_numer(numer_do_dzwonienia, sekundy=czas_polaczenia)
         await interaction.followup.send(f"✅ Misja wykonana ✅, potwierdzenie zakupu robuxow: {target}")
     except Exception as e:
         await interaction.followup.send(f"12 giga szpontu poszło sie pierdolic: {e}")
