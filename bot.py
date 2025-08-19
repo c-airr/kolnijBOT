@@ -7,11 +7,13 @@ import json
 import os
 import sys
 
-def resource_path(relative_path):
-    """Zwraca poprawną ścieżkę dla plików obok .exe lub w PyInstaller."""
-    if hasattr(sys, "_MEIPASS"):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
+def resource_path(relative_path: str) -> str:
+    """Zwraca ścieżkę do plików obok .exe lub obok .py"""
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(__file__)
+    return os.path.join(base_path, relative_path)
 
 SETUP_PATH = resource_path("setup.json")
 SHORTCUTS_PATH = resource_path("shortcuts.json")
