@@ -5,37 +5,49 @@ from adb_bot import pierdzielnij_numer
 import asyncio
 import json
 import os
+import sys
 
+def resource_path(relative_path):
+    """Zwraca poprawną ścieżkę dla plików obok .exe lub w PyInstaller."""
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), relative_path)
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-TOKEN_PATH = os.path.join(SCRIPT_DIR, "token.json")
+SETUP_PATH = resource_path("setup.json")
+SHORTCUTS_PATH = resource_path("shortcuts.json")
 
-with open(TOKEN_PATH, "r", encoding="utf-8") as f:
-    data = json.load(f)
-TOKEN = data.get("token")
+with open(SETUP_PATH, "r", encoding="utf-8") as f:
+    config = json.load(f)
+
+TOKEN = config.get("token")
 if not TOKEN:
-    raise ValueError("Nie znaleziono tokena w pliku token.json")
+    raise ValueError("Nie znaleziono tokena w pliku setup.json")
 
-ALLOWED_USERS = [WpiszTuSwojID]
-BLOKOWANE_NUMERY = {"997","998","999","112","986","911","000","111","110","119","113","122","133","144","118","117","15","17","18","101","102","103","104","995","996","987","992","991","993","994"}
+ALLOWED_USERS = config.get("ALLOWED_USERS", [])
 
+with open(SHORTCUTS_PATH, "r", encoding="utf-8") as f:
+    shortcuts = json.load(f)
+
+BLOKOWANE_NUMERY = {
+    "997", "998", "999", "112", "986", "911", "000", "111",
+    "110", "119", "113", "122", "133", "144", "118", "117",
+    "15", "17", "18", "101", "102", "103", "104", "995",
+    "996", "987", "992", "991", "993", "994"
+}
 
 def sprawdz_numer(numer: str) -> bool:
     return numer not in BLOKOWANE_NUMERY
-
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-with open("shortcuts.json", "r", encoding="utf-8") as f:
-    shortcuts = json.load(f)
-
 @client.event
 async def on_ready():
     await tree.sync()
     print(f"check {client.user} - ready")
+
 
 @app_commands.allowed_installs(guilds=True, users=True)
 @app_commands.allowed_contexts(guilds=True, dms=True, private_channels=True)
@@ -86,11 +98,11 @@ async def kolnijct_command(interaction: discord.Interaction, target: str, ilosc:
 
     numer_info = shortcuts.get(target.lower(), {"numer": target, "czas": 6})
     numer_do_dzwonienia = numer_info["numer"]
-    czas_polaczenia = numer_info.get("czas", 6)
+    czas_polaczenia = numer_info.get("czas", 10)
     ilosc = max(1, min(ilosc, 5))
 
     await interaction.response.send_message(
-        f"juz odpalam AJI i dzwonimy do ({target}) {ilosc} razy przydzwanianie...",
+        f"juz odpalam AJI i dzwonimy do {target} {ilosc} razy przydzwanianie...",
         ephemeral=False
     )
     try:
